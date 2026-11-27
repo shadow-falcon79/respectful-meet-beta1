@@ -1,0 +1,41 @@
+# --- Secrets : ne JAMAIS committer ---
+.env
+.env.*
+!.env.example
+
+# --- Python / backend ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# --- Node / frontend ---
+node_modules/
+dist/
+build/
+.vite/
+*.log
+npm-debug.log*
+
+# --- Éditeurs / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Fichiers uploadés localement en dev ---
+uploads/
+*.sqlite3
+
+# Public Vite production API path (not a secret)
+!.env.production
+
+# TypeScript build cache
+*.tsbuildinfo
+.vercel/

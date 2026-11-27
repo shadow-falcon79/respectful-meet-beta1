@@ -1,0 +1,11 @@
+# Security headers for the static frontend build.
+#
+# Recognized automatically by Netlify and Cloudflare Pages.
+#
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), payment=(self), usb=(), camera=(self), microphone=(self)
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; connect-src 'self' https://respectful-meet-backendbeta1.containers.snapdeploy.app wss://respectful-meet-backendbeta1.containers.snapdeploy.app https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https://respectful-meet-backendbeta1.containers.snapdeploy.app; media-src 'self' blob: https://respectful-meet-backendbeta1.containers.snapdeploy.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'

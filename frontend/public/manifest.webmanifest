@@ -1,0 +1,14 @@
+{
+  "name": "Respectful Meet",
+  "short_name": "Respectful Meet",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#120E11",
+  "theme_color": "#120E11",
+  "icons": [{
+    "src": "/logo-icon.png",
+    "sizes": "192x192",
+    "type": "image/png",
+    "purpose": "any maskable"
+  }]
+}

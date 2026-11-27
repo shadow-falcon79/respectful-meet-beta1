@@ -1,0 +1,39 @@
+# Render Blueprint for the free Respectful Meet beta backend.
+# DATABASE_URL and CORS_ORIGINS must be entered in the Render dashboard.
+services:
+  - type: web
+    name: respectful-meet-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /api/v1/health/ready
+    autoDeployTrigger: commit
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ALLOWED_HOSTS
+        value: respectful-meet-api.onrender.com,*.vercel.app
+      - key: STORAGE_PUBLIC_BASE_URL
+        value: /media
+      - key: ADS_ENABLED
+        value: "false"
+      - key: ADS_PROVIDER
+        value: mock
+      - key: ADS_MOCK_MODE
+        value: "true"
+      - key: MIN_AGE
+        value: "18"
+      - key: MAX_AGE
+        value: "80"
+      - key: DATABASE_POOL_SIZE
+        value: "3"
+      - key: DATABASE_MAX_OVERFLOW
+        value: "2"
