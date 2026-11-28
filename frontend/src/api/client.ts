@@ -66,7 +66,7 @@ function friendlyMessage(status: number, detail: string): string {
   if (status === 408) return TEXT.timeout[lang];
   if (status === 429) return TEXT.tooMany[lang];
   if (status === 502 || status === 503 || status === 504) return TEXT.unavailable[lang];
-  if (status >= 500) return TEXT.server[lang];
+  if (status >= 500) return detail && detail !== "Internal server error" ? `${TEXT.server[lang]} (${detail})` : TEXT.server[lang];
   if (status === 422) return TEXT.invalid[lang];
   if (lang === "fr" && DETAIL_FR[detail]) return DETAIL_FR[detail];
   return detail;

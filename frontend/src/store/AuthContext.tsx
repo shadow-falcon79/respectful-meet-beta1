@@ -1,13 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { registerCryptoIdentity } from "../api/crypto";
+import { ApiError } from "../api/client";
 import {
   fetchCurrentUser,
   logout as apiLogout,
   type CurrentUser,
 } from "../api/auth";
 
-// Authentication is now backed by the real FastAPI session API. The validated
-// UI remains unchanged; only the data source has been switched.
+// Authentication is backed by the real FastAPI session API.
 
 interface AuthContextValue {
   user: CurrentUser | null;
@@ -18,22 +18,44 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUserState] = useState<CurrentUser | null>(null);
   const [status, setStatus] = useState<"loading" | "authenticated" | "anonymous">("loading");
 
   useEffect(() => {
     let active = true;
-    fetchCurrentUser()
-      .then(async (currentUser) => {
-        if (!active) return;
-        setUserState(currentUser);
-        try { await registerCryptoIdentity(); } catch { /* identity can be retried on the next authenticated boot */ }
-        if (active) setStatus("authenticated");
-      })
-      .catch(() => { if (active) setStatus("anonymous"); });
+    (async () => {
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          const currentUser = await fetchCurrentUser();
+          if (!active) return;
+          setUserState(currentUser);
+          setStatus("authenticated");
+          return;
+        } catch (err) {
+          // A real "not logged in" answer (401/403/404...) is final. Network problems,
+          // timeouts and 5xx (e.g. the free backend waking up) must NOT log the user out.
+          const definitive =
+            err instanceof ApiError && err.status >= 400 && err.status < 500 && err.status !== 408 && err.status !== 429;
+          if (definitive) break;
+          await wait(2000 * (attempt + 1));
+          if (!active) return;
+        }
+      }
+      if (active) setStatus("anonymous");
+    })();
     return () => { active = false; };
   }, []);
+
+  // Publish the E2EE public key at every session start (boot, sign-in, sign-up),
+  // in the background: it must never block the UI, and without it other users
+  // cannot open a conversation with this account.
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    registerCryptoIdentity().catch(() => { /* retried at the next session start */ });
+  }, [status]);
 
   const setUser = useCallback((currentUser: CurrentUser) => {
     setUserState(currentUser);

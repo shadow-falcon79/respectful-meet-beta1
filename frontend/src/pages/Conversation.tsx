@@ -58,8 +58,11 @@ export default function Conversation() {
       }
     };
     load();
+    let inFlight = false;
     const interval = window.setInterval(() => {
-      getConversationMessages(id).then((next) => { if (active) setMessages(next); }).catch(() => undefined);
+      if (document.hidden || inFlight) return;
+      inFlight = true;
+      getConversationMessages(id).then((next) => { if (active) setMessages(next); }).catch(() => undefined).finally(() => { inFlight = false; });
     }, 2500);
     return () => { active = false; window.clearInterval(interval); };
   }, [id]);

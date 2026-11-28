@@ -29,6 +29,8 @@ export default function SignUp() {
     event.preventDefault();
     setError(null);
     if (form.password !== form.confirm_password) { setError(t.passwordMismatch); return; }
+    if (!form.date_of_birth) { setError("Veuillez indiquer votre date de naissance."); return; }
+    if (!form.gender) { setError("Veuillez choisir votre genre."); return; }
     if (!acceptTerms) { setError(t.termsRequired); return; }
     setLoading(true);
     try {

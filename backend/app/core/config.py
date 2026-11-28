@@ -22,6 +22,8 @@ class Settings(BaseSettings):
 
 
     environment: str = "development"
+    # Temporary diagnostics: DEBUG_ERRORS=true makes 500 responses name the exception. Keep OFF normally.
+    debug_errors: bool = False
 
     database_url: str = "postgresql+psycopg2://respectful_meet:changeme@localhost:5432/respectful_meet"
     database_pool_size: int = 3
