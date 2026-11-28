@@ -867,11 +867,15 @@ const tr: Partial<Dict> = {
 
 const overrides: Record<Exclude<Language, "EN">, Partial<Dict>> = { FR: fr, ES: es, PT: pt, AR: ar, DE: de, IT: it, RU: ru, ZH: zh, JA: ja, TR: tr };
 
-const requiredTranslationKeys = Object.keys(en) as TranslationKey[];
-for (const [lang, dict] of Object.entries(overrides)) {
-  const missing = requiredTranslationKeys.filter((key) => !dict[key]);
-  if (missing.length) {
-    throw new Error(`Incomplete ${lang} translations: ${missing.join(", ")}`);
+// Missing keys fall back to English (see mergeWithFallback). Never throw at
+// import time: it crashes the whole app into a blank screen in production.
+if (import.meta.env.DEV) {
+  const requiredTranslationKeys = Object.keys(en) as TranslationKey[];
+  for (const [lang, dict] of Object.entries(overrides)) {
+    const missing = requiredTranslationKeys.filter((key) => !dict[key]);
+    if (missing.length) {
+      console.warn(`Incomplete ${lang} translations (EN fallback used): ${missing.join(", ")}`);
+    }
   }
 }
 
