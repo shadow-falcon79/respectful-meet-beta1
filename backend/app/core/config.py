@@ -1,3 +1,4 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,6 +11,15 @@ class Settings(BaseSettings):
     """
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    @field_validator("database_url")
+    @classmethod
+    def _normalize_database_url(cls, value: str) -> str:
+        value = value.strip()
+        for prefix in ("postgres://", "postgresql://"):
+            if value.startswith(prefix):
+                return "postgresql+psycopg2://" + value[len(prefix):]
+        return value
+
 
     environment: str = "development"
 

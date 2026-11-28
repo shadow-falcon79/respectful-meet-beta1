@@ -18,7 +18,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Database URL comes from the app settings (env vars), not hard-coded here.
-config.set_main_option("sqlalchemy.url", settings.database_url)
+config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 
 # All models are imported above (via `import app.models`), so this
 # metadata now reflects the full schema.
